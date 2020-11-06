@@ -67,10 +67,10 @@ print(train_data[412])
 '''
 """# Load Data"""
 
-im_size = 32
+im_size = 91
 train_transform = transforms.Compose([transforms.Resize((im_size,im_size)),
                                       transforms.ToTensor(),
-                                      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+                                      transforms.Normalize((0.5), (0.5))])
 test_transform = transforms.Compose([transforms.Resize((im_size,im_size)), transforms.ToTensor()])
 
 #------------------Train stuff------------------
@@ -100,23 +100,20 @@ class AlexNet(nn.Module):
   def __init__(self, num_classes = 16):
     super(AlexNet, self).__init__()
     self.features = nn.Sequential(
-        nn.Conv2d(3, 64, kernel_size = 3, stride = 2, padding = 1),
+        nn.Conv2d(1, 64, kernel_size = 3, stride = 2, padding = 0),
         nn.ReLU(inplace = True),
         nn.MaxPool2d(kernel_size = 2),
-        nn.Conv2d(64, 192, kernel_size = 3, padding = 1),
+        nn.Conv2d(64, 128, kernel_size = 3, stride = 1, padding = 1),
         nn.ReLU(inplace = True),
         nn.MaxPool2d(kernel_size = 2),
-        nn.Conv2d(192, 384, kernel_size = 3, padding = 1),
+        nn.Conv2d(128, 256, kernel_size = 3, stride = 1, padding = 1),
         nn.ReLU(inplace = True),
-        nn.MaxPool2d(kernel_size = 2),
-        nn.Conv2d(384, 256, kernel_size = 3, padding = 1),
-        nn.ReLU(inplace = True),
-        nn.Conv2d(256, 256, kernel_size = 3, padding = 1),
+        nn.Conv2d(256, 512, kernel_size = 3, stride = 1, padding = 1),
         nn.ReLU(inplace = True)
     )
     self.classifier = nn.Sequential(
         nn.Dropout(),
-        nn.Linear(256*2*2, 4096),
+        nn.Linear(256*2, 4096),
         nn.ReLU(inplace = True),
         nn.Linear(4096, 4096),
         nn.ReLU(inplace = True),
@@ -177,7 +174,7 @@ def train_for_one_epoch(step):
     print("Loss: " + str(lo) + " Accuracy: " + str(acc))
   return train_loss, acc
 
-for i in range(2):
+for i in range(5):
   results = train_for_one_epoch(i)
 
 """#Test"""
